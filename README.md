@@ -1,56 +1,181 @@
-# DSA210-Project
-**Single-player vs Multiplayer Games: Data Science Project**
+#  DSA210 Project
+#  Single-player vs Multiplayer Games: What Do Players Really Prefer?
 
- **Motivation**
-In recent years, the gaming industry has increasingly shifted toward multiplayer experiences.  
-However, many players still value story-driven single-player games.  
-Through this project, I aim to explore whether players actually prefer multiplayer or single-player games — based on measurable data such as sales numbers and review scores.
+##  Motivation
+In recent years, the gaming industry has increasingly shifted toward multiplayer-focused titles. However, single-player games continue to receive strong critical and fan appreciation. This project aims to explore whether players actually prefer multiplayer or single-player games — based on measurable data such as global sales and review scores.
 
- **Data Sources**
-I will use publicly available datasets to collect and combine relevant information:
-- **VGChartz dataset** – Provides global video game sales by title and platform.  
-  (https://www.vgchartz.com/)
-- **Metacritic dataset (Kaggle)** – Includes critic and user review scores for video games.  
-  (https://www.kaggle.com/datasets/)
+---
+
+##  Research Question & Hypotheses
+
+### **Research Question**
+> *Do multiplayer games outperform single-player games in terms of global sales and review scores?*
+
+### **Hypotheses**
+- **H1:** Multiplayer games have significantly higher global sales compared to single-player games.  
+- **H2:** Single-player games receive significantly higher critic and user review scores compared to multiplayer games.  
+- **H3:** Review scores (critic/user) positively correlate with sales irrespective of game type.  
+
+These hypotheses justify the need for:
+- detailed statistical tests (t-test, correlation analysis),
+- exploratory data analysis,
+- regression modeling.
+
+---
+
+##  Data Sources
+
+### **1. VGChartz (Sales Data)**
+- URL: https://www.vgchartz.com
+- Includes: game titles, platforms, release years, global sales.
+
+### **2. Metacritic Video Games Dataset (Kaggle)**
+- URL: https://www.kaggle.com/datasets
+- Includes: critic scores, user scores, genre, release year.
+
+---
+
+##  Data Collection Plan
+
+### **VGChartz**
+VGChartz does **not** provide an API.  
+Therefore, I will collect data using:
+
+- **Web scraping**  
+  Tools:
+  - `requests`
+  - `BeautifulSoup4`
   
-By merging these datasets using game titles, I plan to enrich the data and label games as either single-player or multiplayer.
+Scraping will target:
+- Top-selling games pages
+- Platform lists
+- Sales tables
 
- **Planned Analysis**
-1. **Data Collection & Cleaning**  
-   - Gather data from VGChartz and Metacritic.  
-   - Remove duplicates and normalize game titles.  
-   - Add a “Game Type” label (Single-player / Multiplayer).
+The extracted data will be saved as CSV.
 
-2. **Exploratory Data Analysis (EDA)**  
-   - Compare sales and review averages between categories.  
-   - Create visualizations for yearly sales trends.  
-   - Check correlations between ratings and sales.
+---
 
-3. **Statistical & Machine Learning Methods**  
-   - Perform hypothesis testing (e.g., t-test between sales averages).  
-   - Build a simple regression model to predict sales based on ratings and game type.
+### **Kaggle Dataset**
+Kaggle provides a ready dataset, so the collection method is:
 
-4. **Visualization & Reporting**  
-   - Create charts comparing single vs. multiplayer game success.  
-   - Summarize insights in the final report.
+- Download Kaggle dataset manually
+- Load via pandas (`pd.read_csv()`)
 
-**Project Timeline**
+---
+
+##  Data Merging Strategy
+
+To combine VGChartz and Metacritic data:
+
+- Primary key: **normalized game title**
+- Secondary key: **release year**
+  
+If titles differ slightly, matching will be done using:
+- fuzzy matching (`fuzzywuzzy library`, or `rapidfuzz`)
+- manual inspection for unmatched cases
+
+---
+
+##  Data Cleaning & Normalization
+
+### **1. Game Title Normalization**
+Game titles often appear differently across datasets (e.g., varying punctuation, platform tags).
+
+Normalization steps:
+- Convert titles to lowercase  
+- Remove punctuation  
+- Remove platform info in parentheses (regex)  
+  Example:  
+  - “Halo 3 (Xbox 360)” → “halo 3”
+- Remove edition labels:  
+  (“Definitive Edition”, “Remastered”, “GOTY Edition”)
+- Trim whitespace
+
+This ensures clean, merge-ready uniform titles.
+
+---
+
+### **2. Remove Duplicates**
+If a game appears multiple times:
+- Keep the most complete/accurate record based on filled fields.
+
+---
+
+### **3. Missing Values Handling**
+- If sales or review scores are missing, rows will be:
+  - removed if few,
+  - imputed if many (mean score, median score).
+
+---
+
+### **4. Labeling Game Type**
+Games will be categorized using:
+- Kaggle “genre” or “game type”
+- Keyword detection (e.g., “online”, “multiplayer”, “co-op”)
+
+Resulting in:
+- `singleplayer`
+- `multiplayer`
+
+---
+
+##  Planned Analysis
+
+### **Exploratory Data Analysis (EDA)**
+- Average sales for both game types
+- Average critic/user score comparisons
+- Trend charts by year
+- Sales distribution (histograms)
+- Correlation heatmap
+
+---
+
+### **Statistical Tests**
+- **t-test** (single vs multiplayer sales comparison)
+- **t-test** (single vs multiplayer review score comparison)
+- **Pearson/Spearman correlation** between scores and sales  
+
+---
+
+### **Machine Learning Application**
+A regression model to predict sales using:
+- critic score  
+- user score  
+- game type  
+- release year  
+
+Models considered:
+- Linear Regression  
+- Random Forest  
+
+---
+
+##  Timeline
 | Date | Task |
 |------|------|
-| **Oct 31** | Submit project proposal on GitHub |
-| **Nov 28** | Complete data collection and exploratory analysis |
-| **Jan 2** | Apply ML techniques and finalize analysis |
-| **Jan 9** | Submit final report |
+| **Oct 31** | Submit proposal |
+| **Nov 28** | Data collection, cleaning, normalization, EDA, hypothesis testing |
+| **Jan 2** | ML models and deeper analysis |
+| **Jan 9** | Final report and presentation |
 
- **Tools & Libraries**
+---
+
+##  Tools & Libraries
 - Python  
 - pandas, numpy  
 - matplotlib, seaborn  
+- BeautifulSoup4 (scraping)  
 - scikit-learn  
+- rapidfuzz / fuzzywuzzy (matching titles)
 
-**Expected Outcome**
-I expect to find whether multiplayer games actually dominate in terms of player engagement and sales, or if single-player titles still hold strong in terms of player satisfaction and critical success.
+---
 
-**Ethical Considerations**
-All datasets used will be public and properly cited.  
-No personal or private data will be included in this project.
+##  Expected Outcome
+The analysis will evaluate whether the industry's shift toward multiplayer reflects measurable player preferences, and how ratings influence sales effectiveness for both categories.
+
+---
+
+##  Ethical Considerations
+All datasets are public, non-personal, and ethically sourced.  
+Web scraping will comply with robots.txt rules and reasonable request frequency.
+
