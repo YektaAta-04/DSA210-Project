@@ -1,181 +1,177 @@
-#  DSA210 Project
-#  Single-player vs Multiplayer Games: What Do Players Really Prefer?
+DSA210 Project
+Single-player vs Multiplayer Games: A Data-Driven Comparative Analysis
+1. Motivation
 
-##  Motivation
-In recent years, the gaming industry has increasingly shifted toward multiplayer-focused titles. However, single-player games continue to receive strong critical and fan appreciation. This project aims to explore whether players actually prefer multiplayer or single-player games — based on measurable data such as global sales and review scores.
+The gaming industry has increasingly shifted toward multiplayer-focused titles, with live-service and online competitive games dominating market trends. Despite this, single-player games continue to receive critical acclaim and maintain a loyal audience.
+The goal of this project is to investigate whether multiplayer games truly outperform single-player titles in terms of global sales, using publicly available data and statistical analysis.
 
----
+2. Research Question
 
-##  Research Question & Hypotheses
+Do multiplayer games achieve significantly higher global sales compared to single-player games?
 
-### **Research Question**
-> *Do multiplayer games outperform single-player games in terms of global sales and review scores?*
+3. Hypothesis
 
-### **Hypotheses**
-- **H1:** Multiplayer games have significantly higher global sales compared to single-player games.  
-- **H2:** Single-player games receive significantly higher critic and user review scores compared to multiplayer games.  
-- **H3:** Review scores (critic/user) positively correlate with sales irrespective of game type.  
+Null Hypothesis (H₀):
+There is no significant difference in mean global sales between multiplayer and single-player games.
 
-These hypotheses justify the need for:
-- detailed statistical tests (t-test, correlation analysis),
-- exploratory data analysis,
-- regression modeling.
+Alternative Hypothesis (H₁):
+Multiplayer games have significantly higher global sales than single-player games.
 
----
+This hypothesis is tested using descriptive statistics, visual exploration, and statistical hypothesis testing.
 
-##  Data Sources
+4. Dataset Description
 
-### **1. VGChartz (Sales Data)**
-- URL: https://www.vgchartz.com
-- Includes: game titles, platforms, release years, global sales.
+This project uses a single publicly available dataset, enriched through additional feature engineering:
 
-### **2. Metacritic Video Games Dataset (Kaggle)**
-- URL: https://www.kaggle.com/datasets
-- Includes: critic scores, user scores, genre, release year.
+VGChartz Video Game Sales Dataset (Kaggle)
 
----
+URL: https://www.kaggle.com/datasets/gregorut/videogamesales
 
-##  Data Collection Plan
+Contains:
 
-### **VGChartz**
-VGChartz does **not** provide an API.  
-Therefore, I will collect data using:
+Game titles
 
-- **Web scraping**  
-  Tools:
-  - `requests`
-  - `BeautifulSoup4`
-  
-Scraping will target:
-- Top-selling games pages
-- Platform lists
-- Sales tables
+Platform
 
-The extracted data will be saved as CSV.
+Release year
 
----
+Genre
 
-### **Kaggle Dataset**
-Kaggle provides a ready dataset, so the collection method is:
+Publisher
 
-- Download Kaggle dataset manually
-- Load via pandas (`pd.read_csv()`)
+Regional and global sales
 
----
+Why a Single Dataset?
 
-##  Data Merging Strategy
+Project guidelines state that publicly available datasets must be enriched if used alone.
+To satisfy this requirement, extensive feature engineering was performed.
 
-To combine VGChartz and Metacritic data:
+5. Feature Engineering (Enrichment)
 
-- Primary key: **normalized game title**
-- Secondary key: **release year**
-  
-If titles differ slightly, matching will be done using:
-- fuzzy matching (`fuzzywuzzy library`, or `rapidfuzz`)
-- manual inspection for unmatched cases
+The original dataset includes basic attributes, mainly sales and platform information.
+To enhance its analytical value, the following new variables were created:
 
----
+1. Sales Category (sales_cat)
 
-##  Data Cleaning & Normalization
+Categorized global sales into:
 
-### **1. Game Title Normalization**
-Game titles often appear differently across datasets (e.g., varying punctuation, platform tags).
+low (<1M)
 
-Normalization steps:
-- Convert titles to lowercase  
-- Remove punctuation  
-- Remove platform info in parentheses (regex)  
-  Example:  
-  - “Halo 3 (Xbox 360)” → “halo 3”
-- Remove edition labels:  
-  (“Definitive Edition”, “Remastered”, “GOTY Edition”)
-- Trim whitespace
+mid (1–5M)
 
-This ensures clean, merge-ready uniform titles.
+high (>5M)
 
----
+2. Decade (decade)
 
-### **2. Remove Duplicates**
-If a game appears multiple times:
-- Keep the most complete/accurate record based on filled fields.
+Extracted from release year:
+e.g., 1980s, 1990s, 2000s.
 
----
+3. Platform Family (platform_family)
 
-### **3. Missing Values Handling**
-- If sales or review scores are missing, rows will be:
-  - removed if few,
-  - imputed if many (mean score, median score).
+Mapped each platform into broader families:
 
----
+PlayStation
 
-### **4. Labeling Game Type**
-Games will be categorized using:
-- Kaggle “genre” or “game type”
-- Keyword detection (e.g., “online”, “multiplayer”, “co-op”)
+Nintendo
 
-Resulting in:
-- `singleplayer`
-- `multiplayer`
+Xbox
 
----
+PC
 
-##  Planned Analysis
+Other
 
-### **Exploratory Data Analysis (EDA)**
-- Average sales for both game types
-- Average critic/user score comparisons
-- Trend charts by year
-- Sales distribution (histograms)
-- Correlation heatmap
+4. Game Type (game_type)
 
----
+Estimated whether a game is primarily multiplayer or single-player based on its genre category:
 
-### **Statistical Tests**
-- **t-test** (single vs multiplayer sales comparison)
-- **t-test** (single vs multiplayer review score comparison)
-- **Pearson/Spearman correlation** between scores and sales  
+sports, racing, shooter, fighting → multiplayer
 
----
+other genres → single-player
 
-### **Machine Learning Application**
-A regression model to predict sales using:
-- critic score  
-- user score  
-- game type  
-- release year  
+5. Simplified Genre (genre_simple)
 
-Models considered:
-- Linear Regression  
-- Random Forest  
+Reduced detailed genres into:
 
----
+Action
 
-##  Timeline
-| Date | Task |
-|------|------|
-| **Oct 31** | Submit proposal |
-| **Nov 28** | Data collection, cleaning, normalization, EDA, hypothesis testing |
-| **Jan 2** | ML models and deeper analysis |
-| **Jan 9** | Final report and presentation |
+Combat
 
----
+Competitive
 
-##  Tools & Libraries
-- Python  
-- pandas, numpy  
-- matplotlib, seaborn  
-- BeautifulSoup4 (scraping)  
-- scikit-learn  
-- rapidfuzz / fuzzywuzzy (matching titles)
+Strategy
 
----
+Story Driven
 
-##  Expected Outcome
-The analysis will evaluate whether the industry's shift toward multiplayer reflects measurable player preferences, and how ratings influence sales effectiveness for both categories.
+These engineered features allowed richer analysis and supported valid statistical testing.
 
----
+6. Exploratory Data Analysis (EDA)
 
-##  Ethical Considerations
-All datasets are public, non-personal, and ethically sourced.  
-Web scraping will comply with robots.txt rules and reasonable request frequency.
+EDA was conducted through visualizations such as:
 
+Genre distribution
+
+Global sales by platform family
+
+Sales comparison between single-player and multiplayer games
+
+Global sales trend across decades
+
+These plots provided initial insight into overall market dynamics and differences across game categories.
+
+7. Hypothesis Testing
+
+A Welch two-sample t-test was performed to compare mean global sales between multiplayer and single-player games.
+
+Results
+
+t-statistic: 3.27
+
+p-value: 0.0010
+
+Interpretation
+
+Since p < 0.05, the null hypothesis is rejected.
+There is significant statistical evidence that:
+
+Multiplayer games sell more, on average, than single-player games.
+
+This supports the idea that the industry shift toward multiplayer-oriented games aligns with consumer purchasing behavior.
+
+8. Tools and Libraries
+
+Python
+
+pandas, numpy
+
+seaborn, matplotlib
+
+scipy (statistical tests)
+
+Jupyter Notebook
+
+GitHub for version control
+
+9. Project Structure
+DSA210-Project/
+│
+├── data/
+│   └── vgsales.csv
+│
+├── notebooks/
+│   └── 02_analysis.ipynb
+│
+├── scripts/
+│
+├── README.md
+└── requirements.txt
+
+10. Conclusion
+
+The analysis demonstrates that multiplayer games achieve significantly higher global sales compared to single-player games. Although single-player titles remain influential and critically acclaimed, market data suggests that multiplayer experiences are currently more commercially successful.
+
+The findings provide a data-driven perspective on evolving player preferences and modern industry trends.
+
+11. Ethical Considerations
+
+All data used in this project is publicly available and does not include personal or sensitive information.
+No scraping was performed, and all guidelines regarding ethical data usage were followed.
